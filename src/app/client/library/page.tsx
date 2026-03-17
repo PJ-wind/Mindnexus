@@ -22,7 +22,7 @@ export default async function LibraryPage() {
     orderBy: { views: 'desc' }
   })
 
-  const categories = [...new Set(resources.filter(r => r.area).map(r => r.area!))]
+  const categories = Array.from(new Set(resources.filter(r => r.area).map(r => r.area!)))
 
   return (
     <div className="p-6 max-w-5xl">
