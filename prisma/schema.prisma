@@ -1,0 +1,307 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  THERAPIST
+  ADMIN
+}
+
+enum SessionType {
+  VIDEO
+  VOICE
+  CHAT
+  IN_PERSON
+}
+
+enum SessionStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum Plan {
+  FREE
+  STANDARD
+  PREMIUM
+}
+
+enum CounsellingArea {
+  INDIVIDUAL
+  CHILDREN_TEENS
+  COUPLES
+  FAMILY_GROUP
+  PREMARITAL
+  CAREER_VOCATIONAL
+  SCHOOL_EDUCATIONAL
+  CRISIS
+  REHABILITATION
+  ADDICTION_SUBSTANCE
+  GRIEF_BEREAVEMENT
+  SPIRITUAL_PASTORAL
+}
+
+enum MoodLevel {
+  VERY_LOW
+  LOW
+  NEUTRAL
+  GOOD
+  GREAT
+}
+
+enum AlertType {
+  CRISIS_BUTTON
+  HIGH_RISK_MOOD
+  MISSED_SESSION
+  OVERDUE_HOMEWORK
+  NEW_CLIENT
+}
+
+enum AlertStatus {
+  ACTIVE
+  ASSIGNED
+  RESOLVED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(CLIENT)
+  avatar        String?
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  emailVerified DateTime?
+
+  clientProfile    ClientProfile?
+  therapistProfile TherapistProfile?
+  adminProfile     AdminProfile?
+  sessions         Session[]         @relation("ClientSessions")
+  sentMessages     Message[]         @relation("SentMessages")
+  notifications    Notification[]
+  accounts         Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model ClientProfile {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            Plan            @default(FREE)
+  counsellingArea CounsellingArea @default(INDIVIDUAL)
+  therapistId     String?
+  therapist       TherapistProfile? @relation(fields: [therapistId], references: [id])
+  totalSessions   Int             @default(0)
+  completedSessions Int           @default(0)
+  daysInTherapy   Int             @default(0)
+  startDate       DateTime        @default(now())
+  goals           Goal[]
+  moodEntries     MoodEntry[]
+  homeworkItems   HomeworkItem[]
+  bookings        Booking[]
+  crisisAlerts    CrisisAlert[]
+  progressNotes   ProgressNote[]
+}
+
+model TherapistProfile {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  licenseNumber   String?
+  specialisations CounsellingArea[]
+  yearsExperience Int             @default(0)
+  bio             String?
+  rating          Float           @default(0)
+  totalSessions   Int             @default(0)
+  isActive        Boolean         @default(true)
+  isOnLeave       Boolean         @default(false)
+  clients         ClientProfile[]
+  sessions        Session[]       @relation("TherapistSessions")
+  sessionNotes    SessionNote[]
+  homeworkAssigned HomeworkItem[] @relation("AssignedHomework")
+}
+
+model AdminProfile {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissions String[]
+}
+
+model Session {
+  id           String        @id @default(cuid())
+  reference    String        @unique @default(cuid())
+  clientId     String
+  therapistId  String
+  client       User          @relation("ClientSessions", fields: [clientId], references: [id])
+  therapist    TherapistProfile @relation("TherapistSessions", fields: [therapistId], references: [id])
+  type         SessionType   @default(VIDEO)
+  status       SessionStatus @default(SCHEDULED)
+  area         CounsellingArea @default(INDIVIDUAL)
+  scheduledAt  DateTime
+  startedAt    DateTime?
+  endedAt      DateTime?
+  durationMins Int           @default(60)
+  notes        SessionNote?
+  messages     Message[]
+  booking      Booking?
+  createdAt    DateTime      @default(now())
+}
+
+model SessionNote {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  therapistId String
+  therapist   TherapistProfile @relation(fields: [therapistId], references: [id])
+  content     String
+  mood        MoodLevel?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  clientId    String
+  therapistId String
+  sessionId   String?       @unique
+  client      ClientProfile @relation(fields: [clientId], references: [id])
+  session     Session?      @relation(fields: [sessionId], references: [id])
+  status      BookingStatus @default(PENDING)
+  type        SessionType   @default(VIDEO)
+  area        CounsellingArea @default(INDIVIDUAL)
+  scheduledAt DateTime
+  durationMins Int          @default(60)
+  notes       String?
+  createdAt   DateTime      @default(now())
+}
+
+model MoodEntry {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    ClientProfile @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  mood      MoodLevel
+  journal   String?
+  sleep     Float?
+  water     Int?
+  exercise  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+}
+
+model HomeworkItem {
+  id           String        @id @default(cuid())
+  clientId     String
+  therapistId  String?
+  client       ClientProfile @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  therapist    TherapistProfile? @relation("AssignedHomework", fields: [therapistId], references: [id])
+  title        String
+  description  String?
+  isCompleted  Boolean       @default(false)
+  dueDate      DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime      @default(now())
+}
+
+model Goal {
+  id          String        @id @default(cuid())
+  clientId    String
+  client      ClientProfile @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  progress    Int           @default(0)
+  isCompleted Boolean       @default(false)
+  targetSessions Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  sessionId  String?
+  session    Session? @relation(fields: [sessionId], references: [id])
+  senderId   String
+  receiverId String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model CrisisAlert {
+  id          String      @id @default(cuid())
+  clientId    String
+  client      ClientProfile @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type        AlertType   @default(CRISIS_BUTTON)
+  status      AlertStatus @default(ACTIVE)
+  message     String?
+  assignedTo  String?
+  resolvedAt  DateTime?
+  createdAt   DateTime    @default(now())
+}
+
+model ProgressNote {
+  id        String        @id @default(cuid())
+  clientId  String
+  client    ClientProfile @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  note      String
+  createdAt DateTime      @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model Resource {
+  id          String          @id @default(cuid())
+  title       String
+  description String?
+  type        String
+  area        CounsellingArea?
+  content     String?
+  url         String?
+  views       Int             @default(0)
+  isPublished Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+}
