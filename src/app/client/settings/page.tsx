@@ -155,7 +155,7 @@ export default function ClientSettingsPage() {
               {/* Avatar */}
               <div className="flex items-center gap-4 mb-5 p-4 bg-gray-50 rounded-xl">
                 <div className="w-16 h-16 bg-brand-500 rounded-full flex items-center justify-center text-white text-xl font-semibold flex-shrink-0">
-                  {account.name ? account.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : 'U'}
+                  {account.name ? account.name.split(' ').map((n:string)=>n[0]).join('').slice(0,2).toUpperCase() : 'U'}
                 </div>
                 <div>
                   <div className="text-sm font-medium mb-1">Profile picture</div>
