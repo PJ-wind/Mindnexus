@@ -481,7 +481,7 @@ export default function ClientSettingsPage() {
                 ].map(f => (
                   <div key={f.key}>
                     <label className="block text-xs font-medium text-gray-600 mb-1">{f.label}</label>
-                    <select className="input text-sm" value={sessionPrefs[f.key as keyof typeof sessionPrefs]}
+                     <select className="input text-sm" value={String(sessionPrefs[f.key as keyof typeof sessionPrefs])}
                       onChange={e => setSessionPrefs(p => ({ ...p, [f.key]: e.target.value }))}>
                       {f.options.map(([v,l]) => <option key={v} value={v}>{l}</option>)}
                     </select>
