@@ -95,6 +95,8 @@ export default function ClientSettingsPage() {
     preferredDuration: '60',
     language: 'English',
     timezone: 'Africa/Lagos',
+  })
+  const [videoPrefs, setVideoPrefs] = useState({
     cameraDefault: true,
     micDefault: true,
   })
@@ -495,9 +497,8 @@ export default function ClientSettingsPage() {
                     <div>
                       <div className="text-sm font-medium">{item.label}</div>
                       <div className="text-xs text-gray-400">{item.desc}</div>
-                    </div>
-                    <Toggle value={sessionPrefs[item.key as keyof typeof sessionPrefs] as boolean}
-                      onChange={() => setSessionPrefs(p => ({ ...p, [item.key]: !p[item.key as keyof typeof p] }))} />
+                    <Toggle value={videoPrefs[item.key as keyof typeof videoPrefs]}
+                       onChange={() => setVideoPrefs(p => ({ ...p, [item.key]: !p[item.key as keyof typeof p] }))} />
                   </div>
                 ))}
               </div>
