@@ -16,26 +16,21 @@ export default function LoginPage() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-
-    const result = await signIn('credentials', {
-      email, password, redirect: false
-    })
-
+    const result = await signIn('credentials', { email, password, redirect: false })
     if (result?.error) {
       toast.error('Invalid email or password')
       setLoading(false)
     } else {
       toast.success('Welcome back!')
-      // Redirect based on role — middleware handles this
       router.push('/dashboard')
       router.refresh()
     }
   }
 
   const demoAccounts = [
-    { label: 'Client demo',    email: 'amara@example.com',         pw: 'client123' },
-    { label: 'Therapist demo', email: 'dr.adeyemi@mindnexus.ng',   pw: 'therapist123' },
-    { label: 'Admin demo',     email: 'admin@mindnexus.ng',         pw: 'admin123' },
+    { label: 'Client demo',    email: 'amara@example.com',        pw: 'client123'     },
+    { label: 'Therapist demo', email: 'dr.adeyemi@mindnexus.ng',  pw: 'therapist123'  },
+    { label: 'Admin demo',     email: 'admin@mindnexus.ng',        pw: 'admin123'      },
   ]
 
   return (
@@ -55,24 +50,36 @@ export default function LoginPage() {
         <div className="card shadow-sm">
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email address
+              </label>
               <input type="email" className="input" placeholder="you@email.com"
                 value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium text-gray-700">Password</label>
+                <Link href="/auth/forgot-password"
+                  className="text-xs text-brand-500 hover:underline font-medium">
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <input type={showPw ? 'text' : 'password'} className="input pr-10"
                   placeholder="Your password"
                   value={password} onChange={e => setPassword(e.target.value)} required />
-                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                <button type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   onClick={() => setShowPw(!showPw)}>
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 flex items-center justify-center gap-2">
-              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</> : 'Sign in'}
+            <button type="submit" disabled={loading}
+              className="btn-primary w-full py-2.5 flex items-center justify-center gap-2">
+              {loading
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</>
+                : 'Sign in'}
             </button>
           </form>
 
@@ -94,7 +101,9 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-gray-500 mt-4">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-brand-500 hover:underline font-medium">Sign up free</Link>
+          <Link href="/auth/register" className="text-brand-500 hover:underline font-medium">
+            Sign up free
+          </Link>
         </p>
       </div>
     </div>

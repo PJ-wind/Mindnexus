@@ -5,7 +5,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import {
   LayoutDashboard, Users, Calendar, FileText,
   CheckSquare, MessageCircle, Video, AlertCircle,
-  BarChart2, Settings
+  BarChart2, Settings, FlaskConical, BookOpen
 } from 'lucide-react'
 
 export default async function TherapistLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +18,8 @@ export default async function TherapistLayout({ children }: { children: React.Re
     { label: 'Sessions',    href: '/therapist/sessions',       icon: <Calendar className="w-4 h-4" /> },
     { label: 'Video room',  href: '/therapist/video',          icon: <Video className="w-4 h-4" /> },
     { label: 'Session notes',href: '/therapist/notes',         icon: <FileText className="w-4 h-4" /> },
+    { label: 'Psych tests',    href: '/therapist/tests',       icon: <FlaskConical className="w-4 h-4" /> },
+    { label: 'Theories',       href: '/therapist/theories',    icon: <BookOpen className="w-4 h-4" /> },
     { label: 'Assignments', href: '/therapist/assignments',    icon: <CheckSquare className="w-4 h-4" /> },
     { label: 'Messages',    href: '/therapist/messages',       icon: <MessageCircle className="w-4 h-4" />, badge: 3 },
     { label: 'Crisis alerts',href: '/therapist/crisis',        icon: <AlertCircle className="w-4 h-4" />, badge: 1, badgeColor: 'red' },
