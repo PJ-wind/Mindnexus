@@ -535,7 +535,6 @@ export default function ClientSettingsPage() {
               </button>
             </Card>
           )}
-          )}
 
           {/* ── BILLING ── */}
           {tab === 'billing' && (
