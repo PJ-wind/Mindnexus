@@ -473,39 +473,68 @@ export default function ClientSettingsPage() {
             <Card>
               <SectionTitle title="Session preferences" desc="Set your preferred session format, language, and video settings." />
               <div className="grid md:grid-cols-2 gap-4 mb-4">
-                {[
-                  { label:'Preferred session type', key:'preferredType', options:[['VIDEO','Video call'],['VOICE','Voice call'],['CHAT','Text / chat']] },
-                  { label:'Preferred duration',     key:'preferredDuration', options:[['30','30 minutes'],['60','60 minutes'],['90','90 minutes']] },
-                  { label:'Session language',       key:'language', options:[['English','English'],['Yoruba','Yoruba'],['Igbo','Igbo'],['Hausa','Hausa'],['Pidgin','Pidgin']] },
-                  { label:'Your timezone',          key:'timezone',  options:[['Africa/Lagos','Lagos (WAT, UTC+1)'],['Europe/London','London'],['America/New_York','New York']] },
-                ].map(f => (
-                  <div key={f.key}>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{f.label}</label>
-                     <select className="input text-sm" value={String(sessionPrefs[f.key as keyof typeof sessionPrefs])}
-                      onChange={e => setSessionPrefs(p => ({ ...p, [f.key]: e.target.value }))}>
-                      {f.options.map(([v,l]) => <option key={v} value={v}>{l}</option>)}
-                    </select>
-                  </div>
-                ))}
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Preferred session type</label>
+                  <select className="input text-sm" value={sessionPrefs.preferredType}
+                    onChange={e => setSessionPrefs(p => ({ ...p, preferredType: e.target.value }))}>
+                    <option value="VIDEO">Video call</option>
+                    <option value="VOICE">Voice call</option>
+                    <option value="CHAT">Text / chat</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Preferred duration</label>
+                  <select className="input text-sm" value={sessionPrefs.preferredDuration}
+                    onChange={e => setSessionPrefs(p => ({ ...p, preferredDuration: e.target.value }))}>
+                    <option value="30">30 minutes</option>
+                    <option value="60">60 minutes</option>
+                    <option value="90">90 minutes</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Session language</label>
+                  <select className="input text-sm" value={sessionPrefs.language}
+                    onChange={e => setSessionPrefs(p => ({ ...p, language: e.target.value }))}>
+                    <option value="English">English</option>
+                    <option value="Yoruba">Yoruba</option>
+                    <option value="Igbo">Igbo</option>
+                    <option value="Hausa">Hausa</option>
+                    <option value="Pidgin">Pidgin</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Your timezone</label>
+                  <select className="input text-sm" value={sessionPrefs.timezone}
+                    onChange={e => setSessionPrefs(p => ({ ...p, timezone: e.target.value }))}>
+                    <option value="Africa/Lagos">Lagos (WAT, UTC+1)</option>
+                    <option value="Europe/London">London</option>
+                    <option value="America/New_York">New York</option>
+                  </select>
+                </div>
               </div>
               <div className="pt-4 border-t border-gray-100 space-y-3">
-                {[
-                  { key:'cameraDefault', label:'Camera on by default', desc:'Start video sessions with camera enabled' },
-                  { key:'micDefault',    label:'Microphone on by default', desc:'Start with microphone unmuted' },
-                ].map(item => (
-                  <div key={item.key} className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium">{item.label}</div>
-                      <div className="text-xs text-gray-400">{item.desc}</div>
-                    <Toggle value={videoPrefs[item.key as keyof typeof videoPrefs]}
-                       onChange={() => setVideoPrefs(p => ({ ...p, [item.key]: !p[item.key as keyof typeof p] }))} />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-medium">Camera on by default</div>
+                    <div className="text-xs text-gray-400">Start video sessions with camera enabled</div>
                   </div>
-                ))}
+                  <Toggle value={videoPrefs.cameraDefault}
+                    onChange={() => setVideoPrefs(p => ({ ...p, cameraDefault: !p.cameraDefault }))} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-medium">Microphone on by default</div>
+                    <div className="text-xs text-gray-400">Start with microphone unmuted</div>
+                  </div>
+                  <Toggle value={videoPrefs.micDefault}
+                    onChange={() => setVideoPrefs(p => ({ ...p, micDefault: !p.micDefault }))} />
+                </div>
               </div>
               <button onClick={save} disabled={saving} className="btn-primary mt-4 py-2 px-6">
                 {saving ? 'Saving...' : 'Save preferences'}
               </button>
             </Card>
+          )}
           )}
 
           {/* ── BILLING ── */}
