@@ -53,6 +53,9 @@ export default function HomePage() {
                 {item}
               </a>
             ))}
+            <Link href="/blog" className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">Blog</Link>
+            <Link href="/physical-sessions" className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">Book in-person</Link>
+            <Link href="/report" className="px-3 py-1.5 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">Report a case</Link>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <Link href="/auth/login" className="btn-secondary text-sm py-1.5">Sign in</Link>
@@ -262,7 +265,7 @@ export default function HomePage() {
               <p className="text-sm text-gray-400 leading-relaxed">A leading virtual counselling platform.</p>
             </div>
             {[
-              { title: 'Platform', links: ['For clients', 'For therapists', 'AI companion', 'Community', 'Pricing'] },
+              { title: 'Platform', links: ['For clients', 'For therapists', 'AI companion', 'Blog', 'Book in-person', 'Report a case', 'Pricing'] },
               { title: 'Specialisations', links: ['Grief & bereavement', 'Addiction recovery', 'Couples counselling', 'Crisis support', 'Career counselling'] },
               { title: 'Company', links: ['About us', 'Our therapists', 'Privacy policy', 'Terms of service', 'Contact us'] },
             ].map(col => (
