@@ -6,7 +6,7 @@ export default async function AdminMatchingPage() {
   const unmatched = await prisma.clientProfile.findMany({
     where: { therapistId: null },
     include: { user: true },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { user: { name: 'asc' } }
   })
   const therapists = await prisma.therapistProfile.findMany({ where: { isActive: true }, include: { user: true, _count: { select: { clients: true } } } })
   return (
